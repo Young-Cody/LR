@@ -20,6 +20,8 @@ int ip;
 
 void input()
 {
+	s.clear();
+	input_buffer.clear();
 	int n;
 	cin >> n;
 	while (n--)
@@ -141,6 +143,13 @@ void parser(int lr)
 		lr1();
 	else if (lr == LALR)
 		lalr();
-	input();
-	shift_reduce();
+	int n;
+	cin>>n;
+	while(n--)
+	{
+		input();
+		shift_reduce();
+
+		cout<<'\n';
+	}
 }

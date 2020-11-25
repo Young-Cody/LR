@@ -5,6 +5,7 @@
 using namespace std;
 
 set<int> v;
+map<int, int> old2new;
 
 void core_union()
 {
@@ -14,11 +15,14 @@ void core_union()
 		if (m.find(c[i]) == m.end())
 		{
 			v.insert(i);
+			old2new[i] = i;
 			m[c[i]] = i;
 		}
 		else
 		{
-			c[m[c[i]]].insert(c[i].begin(),c[i].end());
+			int u = m[c[i]];
+			c[u].insert(c[i].begin(),c[i].end());
+			old2new[i] = u;
 		}
 	}
 }
@@ -55,7 +59,7 @@ void compute_action_goto_lalr()
 				string next = p.body[item.top];
 				op t;
 				t.type = 0;
-				t.property = dfa[i][next];
+				t.property = old2new[dfa[i][next]];
 				if (action[i].find(next) == action[i].end())
 					action[i][next] = vector<op>();
 				action[i][next].push_back(t);
@@ -78,7 +82,7 @@ void compute_action_goto_lalr()
 		{
 			if (dfa[i].find(str) == dfa[i].end())
 				continue;
-			Goto[i][str] = dfa[i][str];
+			Goto[i][str] = old2new[dfa[i][str]];
 		}
 	}
 }

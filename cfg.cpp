@@ -69,29 +69,34 @@ void init_first()
 		flag = false;
 		for (auto& str : symbol)
 		{
-			if (NT.find(str) == NT.end()) //ÖÕ½á·û
+			if (NT.find(str) == NT.end()) //ï¿½Õ½ï¿½ï¿½
 			{
-				insert(&FIRST, str, &set<string>({ str }), &flag);
+				set<string> t({ str });
+				insert(&FIRST, str, &t, &flag);
 				continue;
 			}
 
-			for (auto i : h2bs[str]) //·ÇÖÕ½á·û
+			for (auto i : h2bs[str]) //ï¿½ï¿½ï¿½Õ½ï¿½ï¿½
 			{
 				production p = G[i];
 				if (p.body[0] == "eps") //epison
 				{
-					insert(&FIRST, str, &set<string>({ "eps" }), &flag);
+					set<string> t({  "eps" });
+					insert(&FIRST, str, &t, &flag);
 					continue;
 				}
-				int i = 0;
-				for (; i < p.body.size(); i++)
+				int j = 0;
+				for (; j < p.body.size(); i++)
 				{
-					insert(&FIRST, str, &FIRST[p.body[i]], &flag);
-					if (FIRST[p.body[i]].find("eps") == FIRST[p.body[i]].end())
+					insert(&FIRST, str, &FIRST[p.body[j]], &flag);
+					if (FIRST[p.body[j]].find("eps") == FIRST[p.body[j]].end())
 						break;
 				}
-				if (i >= p.body.size())
-					insert(&FIRST, str, &set<string>({ "eps" }), &flag);
+				if (j >= p.body.size())
+				{
+					set<string> t({ "eps" });
+					insert(&FIRST, str, &t, &flag);
+				}
 			}
 		}
 	}
@@ -113,7 +118,8 @@ void init_follow()
 			{
 				if (NT.find(*i) != NT.end())
 				{
-					set<string> f = get_first(&vector<string>(i + 1, p.body.end()));
+					vector<string> t(i + 1, p.body.end());
+					set<string> f = get_first(&t);
 
 					if (f.find("eps") != f.end())
 					{

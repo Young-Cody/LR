@@ -54,7 +54,8 @@ void compute_dfa_slr()
 	item_t item;
 	item.prodid = h2bs[start][0];
 	item.top = 0;
-	I I0 = closure_slr(&I({ item }));
+	I I0({ item });
+	I0 = closure_slr(&I0);
 
 	vector<int> q;
 	q.push_back(get_index_slr(&I0));
@@ -64,14 +65,15 @@ void compute_dfa_slr()
 		q.pop_back();
 		for (auto& str : symbol)
 		{
-			I items = closure_slr(&move_slr(&c[t], str));
-			if (items.size() == 0) continue;
-			if (I2index.find(items) == I2index.end())
+			I Ii = move_slr(&c[t], str);
+			Ii = closure_slr(&Ii);
+			if (Ii.size() == 0) continue;
+			if (I2index.find(Ii) == I2index.end())
 			{
-				int to = get_index_slr(&items);
+				int to = get_index_slr(&Ii);
 				q.push_back(to);
 			}
-			int v = get_index_slr(&items);
+			int v = get_index_slr(&Ii);
 			dfa[t][str] = v;
 		}
 	}

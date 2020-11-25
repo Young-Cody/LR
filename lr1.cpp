@@ -64,7 +64,9 @@ void compute_dfa_lr1()
 	item.prodid = h2bs[start][0];
 	item.top = 0;
 	item.next = "$";
-	I I0 = closure_lr1(&I({ item }));
+
+	I I0{ item };
+	I0 = closure_lr1(&I0);
 
 	vector<int> q;
 	q.push_back(get_index_lr1(&I0));
@@ -74,14 +76,15 @@ void compute_dfa_lr1()
 		q.pop_back();
 		for (auto& str : symbol)
 		{
-			I items = closure_lr1(&move_lr1(&c[t], str));
-			if (items.size() == 0) continue;
-			if (I2index.find(items) == I2index.end())
+			I Ii = move_lr1(&c[t], str);
+			Ii = closure_lr1(&Ii);
+			if (Ii.size() == 0) continue;
+			if (I2index.find(Ii) == I2index.end())
 			{
-				int to = get_index_lr1(&items);
+				int to = get_index_lr1(&Ii);
 				q.push_back(to);
 			}
-			int v = get_index_lr1(&items);
+			int v = get_index_lr1(&Ii);
 			dfa[t][str] = v;
 		}
 	}
