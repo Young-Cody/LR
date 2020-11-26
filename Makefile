@@ -5,6 +5,9 @@ main:
 run:main
 	./main.out
 test:main
-	./main.out <test/1.cfg >test/1.res
+	for file in $(basename $(shell find test/*.cfg)); \
+	do \
+		./main.out <$$file.cfg >$$file.res; \
+	done
 clean:
 	rm -f *.out test/*.res

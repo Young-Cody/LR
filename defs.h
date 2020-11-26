@@ -34,14 +34,10 @@ typedef struct item {
 typedef set<item_t> I;
 typedef vector<I> C;
 
-typedef struct opi
+typedef struct
 {
 	int type;
 	int property;
-	bool operator <(const opi& s) const {
-		if (type != s.type) return type < s.type;
-		return property < s.property;
-	}
 } op;
 
 #endif // !DEFS

@@ -120,26 +120,26 @@ void compute_action_goto_slr()
 					}
 				}
 			}
-			else if (NT.find(p.body[item.top]) == NT.end())
-			{
-				string next = p.body[item.top];
-				op t;
-				t.type = 0;
-				t.property = dfa[i][next];
-				if (action[i].find(next) == action[i].end())
-					action[i][next] = vector<op>();
-				action[i][next].push_back(t);
-			}
 		}
 	}
 
 	for (int i = 0; i < c.size(); i++)
 	{
-		for (auto& str : NT)
+		for (auto& str : symbol)
 		{
 			if (dfa[i].find(str) == dfa[i].end())
 				continue;
-			Goto[i][str] = dfa[i][str];
+			if(NT.find(str) == NT.end())
+			{
+				if (action[i].find(str) == action[i].end())
+					action[i][str] = vector<op>();
+				op t;
+				t.type = 0;
+				t.property = dfa[i][str];
+				action[i][str].push_back(t);
+			}
+			else
+				Goto[i][str] = dfa[i][str];
 		}
 	}
 }

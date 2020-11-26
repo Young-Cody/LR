@@ -5,5 +5,5 @@ using namespace std;
 
 int main()
 {
-	parser(LALR);
+	parser(LR1);
 }
