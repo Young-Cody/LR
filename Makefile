@@ -4,7 +4,7 @@ main:
 	g++ ${shell ls *.cpp} -o main.out
 run:main
 	./main.out
-test:main
+test:
 	for file in $(basename $(shell find test/*.cfg)); \
 	do \
 		./main.out <$$file.cfg >$$file.res; \

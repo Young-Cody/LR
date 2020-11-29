@@ -86,11 +86,19 @@ void init_first()
 					continue;
 				}
 				int j = 0;
-				for (; j < p.body.size(); i++)
+				for (; j < p.body.size(); j++)
 				{
-					insert(&FIRST, str, &FIRST[p.body[j]], &flag);
 					if (FIRST[p.body[j]].find("eps") == FIRST[p.body[j]].end())
+					{
+						insert(&FIRST, str, &FIRST[p.body[j]], &flag);
 						break;
+					}
+					else
+					{
+						set<string> t(FIRST[p.body[j]].begin(),FIRST[p.body[j]].end());
+						t.erase("eps");
+						insert(&FIRST, str, &t, &flag);
+					}
 				}
 				if (j >= p.body.size())
 				{
