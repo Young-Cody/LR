@@ -89,9 +89,14 @@ void shift_reduce()
 		else if (o.type == 1)
 		{
 			print_sr();
-			for (int i = 0; i < G[o.property].body.size() * 2; i++)
+			int n;
+			if(G[o.property].body[0] == "eps")
+				n = 0;
+			else
+				n = G[o.property].body.size();
+			for (int i = 0; i < n * 2; i++)
 				s.pop_back();
-			int ts = atoi(s.back().c_str());;
+			int ts = atoi(s.back().c_str());
 			s.push_back(G[o.property].head);
 			s.push_back(to_string(Goto[ts][G[o.property].head]));
 		}

@@ -99,7 +99,7 @@ void compute_action_goto_slr()
 		for (auto& item : c[i])
 		{
 			production p = G[item.prodid];
-			if (item.top == p.body.size())
+			if (item.top == p.body.size() || p.body.front() == "eps")
 			{
 				if (p.head == start)
 				{
