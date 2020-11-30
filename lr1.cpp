@@ -4,7 +4,7 @@
 using namespace std;
 
 
-
+//规范LR closure函数
 I closure_lr1(I* Ii)
 {
 	I result = *Ii;
@@ -14,21 +14,21 @@ I closure_lr1(I* Ii)
 		item_t item = s.back();
 		s.pop_back();
 		production p = G[item.prodid];
-		if (item.top < p.body.size() && NT.find(p.body[item.top]) != NT.end())
+		if (item.top < p.body.size() && NT.find(p.body[item.top]) != NT.end()) //·后是非终结符
 		{
-			string h = p.body[item.top];
-			for (auto i : h2bs[h])
+			string h = p.body[item.top];	//NT
+			for (auto i : h2bs[h])			//加入该NT所有产生式的非核心项目
 			{
 				item_t it;
 				it.prodid = i;
 				it.top = 0;
 				vector<string> str(p.body.begin() + item.top + 1, p.body.end());
 				str.push_back(item.next);
-				set<string> first = get_first(&str);
-				for (auto& i : first)
+				set<string> first = get_first(&str);	//计算FIRST
+				for (auto& i : first)					//对FIRST中的每个终结符形成非核心项目，加入结果集
 				{
 					it.next = i;
-					if (result.find(it) == result.end())
+					if (result.find(it) == result.end())	//项目不在结果集中
 					{
 						result.insert(it);
 						s.push_back(it);
@@ -63,29 +63,29 @@ void compute_dfa_lr1()
 	item_t item;
 	item.prodid = h2bs[start][0];
 	item.top = 0;
-	item.next = "$";
+	item.next = "$";	//S'的搜索符为$
 
 	I I0{ item };
-	I0 = closure_lr1(&I0);
+	I0 = closure_lr1(&I0);	//初始项目集I0
 
-	vector<int> q;
+	vector<int> q;			//项目集的索引
 	q.push_back(get_index_lr1(&I0));
 	while (!q.empty())
 	{
-		int t = q.back();
+		int t = q.back();	//Ii
 		q.pop_back();
 		for (auto& str : symbol)
 		{
 			I Ii = move_lr1(&c[t], str);
-			Ii = closure_lr1(&Ii);
+			Ii = closure_lr1(&Ii);						//对每个文法符号X,计算goto(I,X)
 			if (Ii.size() == 0) continue;
-			if (I2index.find(Ii) == I2index.end())
+			if (I2index.find(Ii) == I2index.end())		//goto(I,X)不在C中
 			{
 				int to = get_index_lr1(&Ii);
 				q.push_back(to);
 			}
-			int v = get_index_lr1(&Ii);
-			dfa[t][str] = v;
+			int v = get_index_lr1(&Ii);					//goto(I,X) = Ij 的索引j
+			dfa[t][str] = v;							//dfa[i][X] = j
 		}
 	}
 }
@@ -101,24 +101,25 @@ int get_index_lr1(I* items)
 	return I2index[*items];
 }
 
+//构造规范LR分析表
 void compute_action_goto_lr1()
 {
 	action.resize(c.size());
 	Goto.resize(c.size());
 	for (int i = 0; i < c.size(); i++)
 	{
-		for (auto& item : c[i])
+		for (auto& item : c[i])		//遍历每个项目集中的项目
 		{
 			production p = G[item.prodid];
 			if (item.top == p.body.size() || p.body.front() == "eps")
 			{
-				if (p.head == start && item.next == "$")
+				if (p.head == start && item.next == "$")	//包含开始符号产生式的项目集，action表中填入接受动作
 				{
 					op t;
 					t.type = 2;
 					action[i]["$"] = vector<op>({ t });
 				}
-				else
+				else	//对搜索符a，action[i][a]填入归约动作
 				{
 					if (action[i].find(item.next) == action[i].end())
 						action[i][item.next] = vector<op>();
@@ -137,7 +138,7 @@ void compute_action_goto_lr1()
 		{
 			if (dfa[i].find(str) == dfa[i].end())
 				continue;
-			if(NT.find(str) == NT.end()) 
+			if(NT.find(str) == NT.end()) 		//对每个终结符，action表填入移进动作
 			{
 				if (action[i].find(str) == action[i].end())
 					action[i][str] = vector<op>();
@@ -146,7 +147,7 @@ void compute_action_goto_lr1()
 				t.property = dfa[i][str];
 				action[i][str].push_back(t);
 			}
-			else
+			else								//对每个非终结符，构建goto表
 				Goto[i][str] = dfa[i][str];
 		}
 	}

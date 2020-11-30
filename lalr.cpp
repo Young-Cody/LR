@@ -7,6 +7,18 @@ using namespace std;
 set<int> v;
 map<int, int> old2new;
 
+bool cmp::operator()(const I &l, const I &r) const	//比较两个项目集的产生式和·的位置是否相同
+{
+	set<pair<int, int>> ls, rs;
+	set<set<pair<int, int>>> c;
+	for (auto& li : l)
+		ls.insert({ li.prodid, li.top });
+	for (auto& ri : r)
+		rs.insert({ ri.prodid, ri.top });
+	return c.key_comp()(ls, rs);
+}
+
+//LALR 同心集合并
 void core_union()
 {
 	map<I, int, cmp> m;
@@ -18,11 +30,11 @@ void core_union()
 			old2new[i] = i;
 			m[c[i]] = i;
 		}
-		else
+		else	//两个项目集同心，进行合并
 		{
 			int u = m[c[i]];
 			c[u].insert(c[i].begin(),c[i].end());
-			old2new[i] = u;
+			old2new[i] = u;		//映射到合并后的状态
 		}
 	}
 }
@@ -143,16 +155,4 @@ void print_goto_lalr()
 		}
 		cout << '\n';
 	}
-}
-
-bool cmp::operator()(const I &l, const I &r) const
-{
-	set<pair<int, int>> ls, rs;
-	set<set<pair<int, int>>> c;
-	for (auto& li : l)
-		ls.insert({ li.prodid, li.top });
-	c.insert(ls);
-	for (auto& ri : r)
-		rs.insert({ ri.prodid, ri.top });
-	return c.key_comp()(ls, rs);
 }

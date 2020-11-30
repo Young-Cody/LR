@@ -59,7 +59,8 @@ void insert(FIFO* FF, string str, set<string>* s, bool* flag)
 		*flag = true;
 }
 
-void init_first()
+//计算所有单个符号的FIRST
+void init_first()	
 {
 	for (auto& str : symbol)
 		FIRST[str] = set<string>();
@@ -69,17 +70,17 @@ void init_first()
 		flag = false;
 		for (auto& str : symbol)
 		{
-			if (NT.find(str) == NT.end()) //�ս��
+			if (NT.find(str) == NT.end()) 
 			{
 				set<string> t({ str });
 				insert(&FIRST, str, &t, &flag);
 				continue;
 			}
 
-			for (auto i : h2bs[str]) //���ս��
+			for (auto i : h2bs[str]) 
 			{
 				production p = G[i];
-				if (p.body[0] == "eps") //epison
+				if (p.body[0] == "eps") 
 				{
 					set<string> t({  "eps" });
 					insert(&FIRST, str, &t, &flag);
@@ -111,6 +112,7 @@ void init_first()
 	FIRST["$"] = set<string>({ "$" });
 }
 
+//计算所有NT的FOLLOW，SLR计算action归约动作时用到
 void init_follow()
 {
 	for (auto& str : NT)
@@ -143,6 +145,7 @@ void init_follow()
 	}
 }
 
+//计算符号串的FIRST，规范LR用到
 set<string> get_first(vector<string> *a)
 {
 	set<string> result;
